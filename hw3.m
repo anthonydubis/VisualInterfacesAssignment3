@@ -4,7 +4,7 @@ clc; clear; close all;
 
 campus  = imread('ass3-campus.pgm');
 BW      = im2bw(campus, 0);
-figure; imshow(BW);
+% figure; imshow(BW);
 labeled = imread('ass3-labeled.pgm');
 labeled = correctedLabeled(labeled);
 
@@ -12,13 +12,16 @@ labeled = correctedLabeled(labeled);
 
 % Get the desired region properties for the buildings
 stats = regionprops(BW, 'Area', 'BoundingBox', 'Centroid', ... 
-    'MajorAxisLength', 'MinorAxisLength', 'Orientation', 'PixelList');
+    'MajorAxisLength', 'MinorAxisLength', 'Orientation', 'PixelList', ... 
+    'ConvexHull', 'ConvexArea', 'Image');
 N = length(stats);
 
 % Set the building objects
 buildings = containers.Map();
 areaMin = double(intmax);
 areaMax = 0.0;
+turns = zeros(27,1);
+
 for i=1:N
     b_stats = stats(i);
     b = Building;
@@ -31,8 +34,9 @@ for i=1:N
     b.area = b_stats.Area;
     b.centroid = b_stats.Centroid;
     b = b.setOrientation(b_stats.Orientation);
-    % b.orientation = b_stats.Orientation;
     b.boundingBox = b_stats.BoundingBox;
+    b = b.setImage(b_stats.Image);
+    turns(b.number) = b.numTurns;
     buildings(int2str(b.number)) = b;
     
     areaMin = min(areaMin, b.area);
@@ -42,11 +46,17 @@ end
 % Set the size attribute
 for i=1:N
     b = buildings(int2str(i));
-    b.size = getSizeDescription(b.area, areaMin, areaMax);
+    b.buildingSize = getSizeDescription(b.area, areaMin, areaMax);
     buildings(int2str(i)) = b;
 end
 
 % Set building shape
+for i=1:N
+    key = int2str(i);
+    b = buildings(key);
+    b.shape = determineShape(b, labeled)
+    buildings(key) = b;
+end
 
 % Find buildings with center of mass in background
 for i=1:N
@@ -62,7 +72,6 @@ end
 
 % Let's create the Building objects based on the map
 % map = java.util.HashMap;
-
 
 
 
