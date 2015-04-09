@@ -8,6 +8,16 @@ BW      = im2bw(campus, 0);
 labeled = imread('ass3-labeled.pgm');
 labeled = correctedLabeled(labeled);
 
+% Map the building numbers to their names
+b_names = containers.Map();
+strs = textread('ass3-table.txt', '%s', 'delimiter', '\n');
+for i=1:length(strs)
+    str = strs{i};
+    len = length(str);
+    eqls = strfind(str, '=');
+    b_names(str(1:eqls-1)) = str(eqls+1:len);
+end
+
 %% Step 1 - Set the building features and descriptions
 
 % Get the desired region properties for the buildings
@@ -26,9 +36,10 @@ for i=1:N
     b_stats = stats(i);
     b = Building;
     
-    % Get a point within the building
+    % Get a point within the building to set the building name and number
     pt = b_stats.PixelList(1,:);
     b.number = labeled(pt(2), pt(1));
+    b.name = b_names(int2str(b.number))
 
     % Set basic properties
     b.area = b_stats.Area;
