@@ -44,7 +44,7 @@ classdef Building
         function obj = setBoundingBox(obj, rec)
             obj.boundingBox = rec;
             scale_factor = 2.1;
-            minIncrease = 25;
+            minIncrease = 30;
             maxIncrease = 70;
             % Determine new width with min/max boundaries
             newW = rec(3) * scale_factor;
