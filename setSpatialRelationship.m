@@ -25,25 +25,25 @@ function [S, T] = near(S, T)
 end
 
 function [S, T] = east(S, T)
-    if S.centroid(1) < T.centroid(1)
+    if S.spatialPts(2,1) < T.spatialPts(4,1)
         S.east = [S.east T.number];
     end
 end
 
 function [S, T] = west(S, T)
-    if S.centroid(1) > T.centroid(1)
+    if S.spatialPts(4,1) > T.spatialPts(2,1)
         S.west = [S.west T.number];
     end
 end
 
 function [S, T] = north(S, T)
-    if S.centroid(2) > T.centroid(2)
+    if S.spatialPts(1,2) > T.spatialPts(3,2)
         S.north = [S.north T.number];
     end
 end
 
 function [S, T] = south(S, T)
-    if S.centroid(2) < T.centroid(2)
+    if S.spatialPts(3,2) < T.spatialPts(1,2)
         S.south = [S.south T.number];
     end
 end

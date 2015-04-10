@@ -10,6 +10,7 @@ classdef Building
         centroid;
         orientation;
         boundingBox;
+        spatialPts; % Used to determine N,S,E,W relationships
         expandedBoundingBox;
         image;
         corners;
@@ -43,6 +44,16 @@ classdef Building
         
         function obj = setBoundingBox(obj, rec)
             obj.boundingBox = rec;
+            
+            % Set spatialPts
+            pts = zeros(4,2);
+            pts(1,:) = [rec(1)+rec(3)/2, rec(2)]; % North pt
+            pts(2,:) = [rec(1)+rec(3), rec(2)+rec(4)/2]; % East pt
+            pts(3,:) = [rec(1)+rec(3)/2, rec(2)+rec(4)]; % South pt
+            pts(4,:) = [rec(1), rec(2)+rec(4)/2]; % West pt
+            obj.spatialPts = pts;
+            
+            % Set expandedBoundingBox
             scale_factor = 2.1;
             minIncrease = 30;
             maxIncrease = 70;
