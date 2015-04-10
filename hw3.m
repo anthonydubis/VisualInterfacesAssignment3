@@ -1,4 +1,4 @@
-clc; clear; close all;
+
 
 %% Step 0 - Get the campus map, a BW represention, and a labeled version
 
@@ -66,27 +66,35 @@ for i=1:N
 end
 
 
-%% Step 2 - Set the spatial relationships between buildings
+% %% Step 2 - Set the spatial relationships between buildings
+% % Establish relationships between all buildings
+% for i=1:N
+%     for j=1:N
+%         if i == j; continue; end
+%         S = buildings(int2str(i));
+%         T = buildings(int2str(j));
+%         [S, T] = setSpatialRelationship(S, T, 'near');
+%         [S, T] = setSpatialRelationship(S, T, 'east');
+%         [S, T] = setSpatialRelationship(S, T, 'west');
+%         [S, T] = setSpatialRelationship(S, T, 'north');
+%         [S, T] = setSpatialRelationship(S, T, 'south');
+%         buildings(int2str(i)) = S;
+%         buildings(int2str(j)) = T;
+%     end
+% end
+% 
+% fprintf('About to prune the data\n');
+% % Let's prune the data
+% for i=1:N
+%     bMap = pruneRelationships(buildings, buildings(int2str(i)));
+% end
+% fprintf('Done pruning the data\n');
 
-% Establish relationships between all buildings
-for i=1:N
-    for j=1:N
-        if i == j; continue; end
-        S = buildings(int2str(i));
-        T = buildings(int2str(j));
-        [S, T] = setSpatialRelationship(S, T, 'near');
-        [S, T] = setSpatialRelationship(S, T, 'east');
-        [S, T] = setSpatialRelationship(S, T, 'west');
-        [S, T] = setSpatialRelationship(S, T, 'north');
-        [S, T] = setSpatialRelationship(S, T, 'south');
-        buildings(int2str(i)) = S;
-        buildings(int2str(j)) = T;
-    end
-end
+%% Step 3 - Settingand describing sources & targets
 
-fprintf('About to prune the data\n');
-% Let's prune the data
-for i=1:N
-    bMap = pruneRelationships(buildings, buildings(int2str(i)));
-end
-fprintf('Done pruning the data\n');
+% Get the source (S) and the target (T)
+imshow(campus)
+S = ginput(1);
+fprintf('Show the green cloud and the S description');
+T = ginput(1);
+fprintf('Show the blue cloud and the T description');
