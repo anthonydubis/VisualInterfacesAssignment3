@@ -19,7 +19,9 @@ end
 end
 
 function [S, T] = near(S, T)
-    S.near = [S.near T.number];
+    if rectint(S.expandedBoundingBox, T.boundingBox) > 0
+        S.near = [S.near T.number];
+    end
 end
 
 function [S, T] = east(S, T)

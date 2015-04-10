@@ -4,7 +4,7 @@ clc; clear; close all;
 
 campus  = imread('supporting/ass3-campus.pgm');
 BW      = im2bw(campus, 0);
-figure; imshow(BW); hold on;
+% figure; imshow(BW); hold on;
 labeled = imread('supporting/ass3-labeled.pgm');
 labeled = correctedLabeled(labeled);
 
@@ -30,7 +30,6 @@ stats = regionprops(BW, 'Area', 'BoundingBox', 'Centroid', ...
 buildings = containers.Map();
 areaMin = double(intmax);
 areaMax = 0.0;
-turns = zeros(27,1);
 
 for i=1:N
     b_stats = stats(i);
@@ -41,18 +40,17 @@ for i=1:N
     b.number = labeled(pt(2), pt(1));
     b.name = b_names(int2str(b.number));
     
-    % Plot centroid
-    cent = b_stats.Centroid;
-    center = plot(cent(1), cent(2), 'o', 'MarkerEdgeColor', 'r');
-    set(center, 'MarkerSize', 6, 'LineWidth', 3);
+%     % Plot centroid
+%     cent = b_stats.Centroid;
+%     center = plot(cent(1), cent(2), 'o', 'MarkerEdgeColor', 'r');
+%     set(center, 'MarkerSize', 6, 'LineWidth', 3);
 
     % Set basic properties
     b.area = b_stats.Area;
     b.centroid = b_stats.Centroid;
     b = b.setOrientation(b_stats.Orientation);
-    b.boundingBox = b_stats.BoundingBox;
+    b = b.setBoundingBox(b_stats.BoundingBox);
     b = b.setImage(b_stats.Image);
-    turns(b.number) = b.numTurns;
     b.shape = determineShape(b, labeled);
     buildings(int2str(b.number)) = b;
     

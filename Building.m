@@ -10,6 +10,7 @@ classdef Building
         centroid;
         orientation;
         boundingBox;
+        expandedBoundingBox;
         image;
         corners;
         boundaries;
@@ -38,6 +39,25 @@ classdef Building
             else
                 obj.oriented = 'NorthToSouth';
             end 
+        end
+        
+        function obj = setBoundingBox(obj, rec)
+            obj.boundingBox = rec;
+            scale_factor = 2.1;
+            minIncrease = 25;
+            maxIncrease = 70;
+            % Determine new width with min/max boundaries
+            newW = rec(3) * scale_factor;
+            newW = max(newW, rec(3)+minIncrease);
+            newW = min(newW, rec(3)+maxIncrease);
+            % Determine new height with min/max boundaries
+            newH = rec(4) * scale_factor;
+            newH = max(newH, rec(4)+minIncrease);
+            newH = min(newH, rec(4)+maxIncrease);
+            % Determine new origin
+            newX = rec(1) - ((newW - rec(3)) / 2);
+            newY = rec(2) - ((newH - rec(4)) / 2);
+            obj.expandedBoundingBox = [newX, newY, newW, newH];
         end
         
         function obj = setImage(obj, image)
