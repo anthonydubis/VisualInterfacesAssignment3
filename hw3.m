@@ -83,4 +83,10 @@ for i=1:N
         buildings(int2str(j)) = T;
     end
 end
-    
+
+fprintf('About to prune the data\n');
+% Let's prune the data
+for i=1:N
+    bMap = pruneRelationships(buildings, buildings(int2str(i)));
+end
+fprintf('Done pruning the data\n');
