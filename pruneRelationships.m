@@ -40,27 +40,19 @@ end
 
 function adj = getAdjacentNodes(building, dir)
 switch dir
-    case 'east'  
-        adj = building.east;
-    case 'west'  
-        adj = building.west;
-    case 'north' 
-        adj = building.north;
-    case 'south'
-        adj = building.south;
+    case 'east';  adj = building.east;
+    case 'west';  adj = building.west;
+    case 'north'; adj = building.north;
+    case 'south'; adj = building.south;
 end
 end
 
 function building = setAdjacentNodes(building, adj, dir)
 switch dir
-    case 'east' 
-        building.east = adj;
-    case 'west'  
-        building.west = adj;
-    case 'north' 
-        building.north = adj;
-    case 'south'
-        building.south = adj;
+    case 'east';  building.east = adj;
+    case 'west';  building.west = adj;
+    case 'north'; building.north = adj;
+    case 'south'; building.south = adj;
 end
 end
 
