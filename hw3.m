@@ -2,16 +2,17 @@ clc; clear; close all;
 
 %% Step 0 - Get the campus map, a BW represention, and a labeled version
 
-campus  = imread('ass3-campus.pgm');
+campus  = imread('supporting/ass3-campus.pgm');
 BW      = im2bw(campus, 0);
-% figure; imshow(BW);
-labeled = imread('ass3-labeled.pgm');
+figure; imshow(BW); hold on;
+labeled = imread('supporting/ass3-labeled.pgm');
 labeled = correctedLabeled(labeled);
 
 % Map the building numbers to their names
 b_names = containers.Map();
-strs = textread('ass3-table.txt', '%s', 'delimiter', '\n');
-for i=1:length(strs)
+strs = textread('supporting/ass3-table.txt', '%s', 'delimiter', '\n');
+N = length(strs);
+for i=1:N
     str = strs{i};
     len = length(str);
     eqls = strfind(str, '=');
@@ -24,7 +25,6 @@ end
 stats = regionprops(BW, 'Area', 'BoundingBox', 'Centroid', ... 
     'MajorAxisLength', 'MinorAxisLength', 'Orientation', 'PixelList', ... 
     'ConvexHull', 'ConvexArea', 'Image');
-N = length(stats);
 
 % Set the building objects
 buildings = containers.Map();
@@ -39,7 +39,12 @@ for i=1:N
     % Get a point within the building to set the building name and number
     pt = b_stats.PixelList(1,:);
     b.number = labeled(pt(2), pt(1));
-    b.name = b_names(int2str(b.number))
+    b.name = b_names(int2str(b.number));
+    
+    % Plot centroid
+    cent = b_stats.Centroid;
+    center = plot(cent(1), cent(2), 'o', 'MarkerEdgeColor', 'r');
+    set(center, 'MarkerSize', 6, 'LineWidth', 3);
 
     % Set basic properties
     b.area = b_stats.Area;
@@ -48,6 +53,7 @@ for i=1:N
     b.boundingBox = b_stats.BoundingBox;
     b = b.setImage(b_stats.Image);
     turns(b.number) = b.numTurns;
+    b.shape = determineShape(b, labeled);
     buildings(int2str(b.number)) = b;
     
     areaMin = min(areaMin, b.area);
@@ -61,35 +67,22 @@ for i=1:N
     buildings(int2str(i)) = b;
 end
 
-% Set building shape
-for i=1:N
-    key = int2str(i);
-    b = buildings(key);
-    b.shape = determineShape(b, labeled)
-    buildings(key) = b;
-end
 
-% Find buildings with center of mass in background
+%% Step 2 - Set the spatial relationships between buildings
+
+% Establish relationships between all buildings
 for i=1:N
-    b = buildings(int2str(i));
-    cent = round(b.centroid);
-    background = labeled(cent(2), cent(1));
-    if background == 0
-        b.number;
+    for j=1:N
+        if i == j; continue; end
+        S = buildings(int2str(i));
+        T = buildings(int2str(j));
+        [S, T] = setSpatialRelationship(S, T, 'near');
+        [S, T] = setSpatialRelationship(S, T, 'east');
+        [S, T] = setSpatialRelationship(S, T, 'west');
+        [S, T] = setSpatialRelationship(S, T, 'north');
+        [S, T] = setSpatialRelationship(S, T, 'south');
+        buildings(int2str(i)) = S;
+        buildings(int2str(j)) = T;
     end
 end
     
-
-
-% Let's create the Building objects based on the map
-% map = java.util.HashMap;
-
-
-
-
-
-
-
-
-
-
