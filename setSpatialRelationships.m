@@ -1,4 +1,15 @@
-function [S, T] = setSpatialRelationship( S, T, rel )
+function [S, T] = setSpatialRelationships( S, T )
+% Determines spatial relations for the source (S) and the target (T) 
+% S and T are Building objects
+% Example of how to read north(S, T) : North of S is T
+[S, T] = setSpatialRelationship(S, T, 'near');
+[S, T] = setSpatialRelationship(S, T, 'east');
+[S, T] = setSpatialRelationship(S, T, 'west');
+[S, T] = setSpatialRelationship(S, T, 'north');
+[S, T] = setSpatialRelationship(S, T, 'south');
+end
+
+function [S, T] = setSpatialRelationship( S, T, rel)
 % Determines if the source (S) and the target (T) is spacially related
 % S and T are Building objects
 % rel is a string: 'east' 'west' 'north' or 'south'
