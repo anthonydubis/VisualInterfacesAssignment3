@@ -38,15 +38,6 @@ end
 orig = setAdjacentNodes(orig, adj_orig, dir);
 end
 
-function adj = getAdjacentNodes(building, dir)
-switch dir
-    case 'east';  adj = building.east;
-    case 'west';  adj = building.west;
-    case 'north'; adj = building.north;
-    case 'south'; adj = building.south;
-end
-end
-
 function building = setAdjacentNodes(building, adj, dir)
 switch dir
     case 'east';  building.east = adj;

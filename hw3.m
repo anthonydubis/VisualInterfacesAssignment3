@@ -1,4 +1,6 @@
-clc; clear; close all;
+% clc; clear; close all;
+
+resetData = false;
 
 %% Step 0 - Get the campus map, a BW represention, and a labeled version
 
@@ -19,6 +21,7 @@ for i=1:N
     b_names(str(1:eqls-1)) = str(eqls+1:len);
 end
 
+if resetData
 %% Step 1 - Set the building features and descriptions
 
 % Get the desired region properties for the buildings
@@ -79,23 +82,55 @@ for i=1:N
     end
 end
 
-fprintf('About to prune the data\n');
-% Let's prune the data
+% Prune the graph to remove relationships that can be inferred
+fprintf('Pruning the graph\n');
 for i=1:N
     bMap = pruneRelationships(buildings, buildings(int2str(i)));
 end
-fprintf('Done pruning the data\n');
+fprintf('Done pruning the graph\n');
 
-% % Step 3 - Settingand describing sources & targets
-% 
-% Get the source (S) and the target (T)
-% imshow(campus)
-% sLoc = ginput(1);
-% S = building;
-% S.number = 28;
-% S.name = 'Source';
-% S = S.setBoundingBox([sLoc(1) sLoc(2) 1 1]);
-% 
-% 
+end
+
+%% Step 3 - Setting and describing sources & targets
+
+% Get the source (S) 
+figure(); imshow(campus);
+sLoc = int16(ginput(1));
+
+% Set it up as a building and enter it in the graph
+fprintf('Working on S\n');
+S = Building;
+S.number = 28;
+S.name = 'Source';
+S.centroid = sLoc;
+S = S.setBoundingBox([sLoc(1) sLoc(2) 1 1]);
+buildings('28') = S;
+for i=1:N
+    [S, T] = setSpatialRelationships(S, buildings(int2str(i)));
+    buildings('28') = S;
+    buildings(int2str(i)) = T;
+end
+% Don't prune for now - let's work with raw relationships
+% bMap = pruneRelationships(buildings, buildings('28'));
+
+%% Step 3.5 - Error checking
+figure(); imshow(campus); hold on;
+for i=1:N
+    bld = buildings(int2str(i));
+    pts = bld.spatialPts;
+    for j=1:size(pts,1)
+        center = plot(pts(j,1), pts(j,2), 'o', 'MarkerEdgeColor', 'r');
+        set(center, 'MarkerSize', 6, 'LineWidth', 3);
+    end
+end
+center = plot(S.centroid(1), S.centroid(2), 'o', 'MarkerEdgeColor', 'r');
+set(center, 'MarkerSize', 6, 'LineWidth', 3);
+
+hold off;
+
+% Get the sources description
+sDesc = getBuildingSpatialDesc(buildings('28'), buildings, labeled)
+fprintf('Finishing working on S\n');
+
 % T = ginput(1);
 % fprintf('Show the red cloud and the T description');

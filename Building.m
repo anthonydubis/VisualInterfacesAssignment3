@@ -44,7 +44,7 @@ classdef Building
         
         function obj = setBoundingBox(obj, rec)
             obj.boundingBox = rec;
-            
+                        
             % Set spatialPts
             pts = zeros(4,2);
             pts(1,:) = [rec(1)+rec(3)/2, rec(2)]; % North pt
