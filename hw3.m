@@ -1,5 +1,4 @@
 % clc; clear; close all;
-
 resetData = false;
 
 %% Step 0 - Get the campus map, a BW represention, and a labeled version
@@ -30,7 +29,7 @@ stats = regionprops(BW, 'Area', 'BoundingBox', 'Centroid', ...
     'ConvexHull', 'ConvexArea', 'Image');
 
 % Set the building objects
-buildings = containers.Map();
+bMap = containers.Map();
 areaMin = double(intmax);
 areaMax = 0.0;
 
@@ -55,7 +54,7 @@ for i=1:N
     b = b.setBoundingBox(b_stats.BoundingBox);
     b = b.setImage(b_stats.Image);
     b.shape = determineShape(b, labeled);
-    buildings(int2str(b.number)) = b;
+    bMap(int2str(b.number)) = b;
     
     areaMin = min(areaMin, b.area);
     areaMax = max(areaMax, b.area);
@@ -63,9 +62,9 @@ end
 
 % Set the size attribute
 for i=1:N
-    b = buildings(int2str(i));
+    b = bMap(int2str(i));
     b.buildingSize = getSizeDescription(b.area, areaMin, areaMax);
-    buildings(int2str(i)) = b;
+    bMap(int2str(i)) = b;
 end
 
 
@@ -74,18 +73,18 @@ end
 for i=1:N
     for j=1:N
         if i == j; continue; end
-        S = buildings(int2str(i));
-        T = buildings(int2str(j));
+        S = bMap(int2str(i));
+        T = bMap(int2str(j));
         [S, T] = setSpatialRelationships(S, T);
-        buildings(int2str(i)) = S;
-        buildings(int2str(j)) = T;
+        bMap(int2str(i)) = S;
+        bMap(int2str(j)) = T;
     end
 end
 
 % Prune the graph to remove relationships that can be inferred
 fprintf('Pruning the graph\n');
 for i=1:N
-    bMap = pruneRelationships(buildings, buildings(int2str(i)));
+    bMap = pruneRelationships(bMap, bMap(int2str(i)));
 end
 fprintf('Done pruning the graph\n');
 
@@ -93,44 +92,16 @@ end
 
 %% Step 3 - Setting and describing sources & targets
 
+% Turn campus into RBG
+rgb = campus(:,:,[1 1 1]);
+rgb(50,50,:) = [255 0 0]; % Sets pixel 50, 50 to red
+
 % Get the source (S) 
 figure(); imshow(campus);
 sLoc = int16(ginput(1));
-
-% Set it up as a building and enter it in the graph
-fprintf('Working on S\n');
-S = Building;
-S.number = 28;
-S.name = 'Source';
-S.centroid = sLoc;
-S = S.setBoundingBox([sLoc(1) sLoc(2) 1 1]);
-buildings('28') = S;
-for i=1:N
-    [S, T] = setSpatialRelationships(S, buildings(int2str(i)));
-    buildings('28') = S;
-    buildings(int2str(i)) = T;
-end
-% Don't prune for now - let's work with raw relationships
-% bMap = pruneRelationships(buildings, buildings('28'));
-
-%% Step 3.5 - Error checking
-figure(); imshow(campus); hold on;
-for i=1:N
-    bld = buildings(int2str(i));
-    pts = bld.spatialPts;
-    for j=1:size(pts,1)
-        center = plot(pts(j,1), pts(j,2), 'o', 'MarkerEdgeColor', 'r');
-        set(center, 'MarkerSize', 6, 'LineWidth', 3);
-    end
-end
-center = plot(S.centroid(1), S.centroid(2), 'o', 'MarkerEdgeColor', 'r');
-set(center, 'MarkerSize', 6, 'LineWidth', 3);
-
-hold off;
+S = buildingForPoint(bMap, 28, 'Source', sLoc);
 
 % Get the sources description
-sDesc = getBuildingSpatialDesc(buildings('28'), buildings, labeled)
-fprintf('Finishing working on S\n');
+sDesc = getBuildingSpatialDesc(bMap('28'), bMap, labeled)
 
-% T = ginput(1);
-% fprintf('Show the red cloud and the T description');
+% Color the source and it's cloud green
