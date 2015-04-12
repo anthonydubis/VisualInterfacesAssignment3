@@ -1,5 +1,5 @@
-% clc; clear; close all;
-resetData = false;
+clc; clear; close all;
+resetData = true;
 
 %% Step 0 - Get the campus map, a BW represention, and a labeled version
 
@@ -82,7 +82,7 @@ for i=1:N
 end
 
 % Prune the graph to remove relationships that can be inferred
-fprintf('Pruning the graph\n');
+fprintf('Pruning the graph. Please wait...\n');
 for i=1:N
     bMap = pruneRelationships(bMap, bMap(int2str(i)));
 end
@@ -94,25 +94,31 @@ end
 % Turn campus into RBG
 rgb = campus(:,:,[1 1 1]);
 
-% Get the source (S) 
-figure(); imshow(campus);
+% Get the source (S) and it's description *********************************
+figure(); imshow(rgb);
 sLoc = int16(ginput(1));
 S = buildingForPoint(bMap, 28, 'Source', sLoc);
 sDesc = getBuildingSpatialDesc(bMap('28'), bMap, labeled);
+fprintf('Source Description is: %s\n', sDesc{1});
 
-% Get the cloud of pixels around S that form an equivalence class
-[list, rejected] = getEquivalenceClass(S, bMap, sDesc, labeled);
-
-% Color in the cloud
-while ~list.isEmpty()
-    pt = list.remove();
-    rgb(pt(2),pt(1),:) = [255 0 0]; % Sets pixel 50, 50 to red
+% Get the equivalence class of pixels surrounding S and color them green
+cloud = getEquivalenceClass(S, bMap, sDesc, labeled);
+while ~cloud.isEmpty()
+    pt = cloud.remove();
+    rgb(pt(2),pt(1),:) = [0 255 0];
 end
+imshow(rgb);
 
-% Color in rejected area
-while ~rejected.isEmpty()
-    pt = rejected.remove();
-    rgb(pt(2),pt(1),:) = [0 255 0]; % Sets pixel 50, 50 to red
+% Get the target (T) and it's description *********************************
+tLoc = int16(ginput(1));
+T = buildingForPoint(bMap, 29, 'Target', tLoc);
+tDesc = getBuildingSpatialDesc(bMap('29'), bMap, labeled);
+fprintf('Target Description is: %s\n', tDesc{1});
+
+% Get the equivalence class of pixels surrounding S and color them green
+cloud = getEquivalenceClass(T, bMap, tDesc, labeled);
+while ~cloud.isEmpty()
+    pt = cloud.remove();
+    rgb(pt(2),pt(1),:) = [0 0 255];
 end
-
 imshow(rgb);

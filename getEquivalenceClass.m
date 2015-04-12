@@ -1,17 +1,15 @@
-function [ pts, rejected ] = getEquivalenceClass(bOrig, bMap, descOrig, labeled)
+function [ pts ] = getEquivalenceClass(bOrig, bMap, descOrig, labeled)
 % Determines what other pixels share the same description as bOrig
+fprintf('Computing the pixel cloud. Please wait...\n');
 
 bldNum = labeled(bOrig.centroid(2), bOrig.centroid(1));
 queue = java.util.LinkedList();
 visited = zeros(size(labeled)); % Will contain 1 for points we've visited
 pts = java.util.LinkedList(); % Points in the equivalance class
-rejected = java.util.LinkedList(); % See what points were rejected
 
 queue.add(bOrig.centroid);
 
-while ~queue.isEmpty()
-    % Make sure there's enough room in the visited array
-    
+while ~queue.isEmpty()    
     % Get the next point
     pt = queue.remove()';
     
@@ -31,9 +29,8 @@ while ~queue.isEmpty()
         queue.add([pt(1),   pt(2)-1]);
         queue.add([pt(1)+1, pt(2)]);
         queue.add([pt(1),   pt(2)+1]);
-    else
-        rejected.add(pt);
     end
+    % Set the point to visited so we don't process it again
     visited(pt(2), pt(1)) = 1;
 end
 
