@@ -3,35 +3,25 @@ function [ pts, rejected ] = getEquivalenceClass(bOrig, bMap, descOrig, labeled)
 
 bldNum = labeled(bOrig.centroid(2), bOrig.centroid(1));
 queue = java.util.LinkedList();
-visited = [0 0]; %Will contains points we've seen before
+visited = zeros(size(labeled)); % Will contain 1 for points we've visited
 pts = java.util.LinkedList(); % Points in the equivalance class
 rejected = java.util.LinkedList(); % See what points were rejected
-
-% Limit the number of iterations for testing purposes
-i = 1;
-len = 1;
 
 queue.add(bOrig.centroid);
 
 while ~queue.isEmpty()
     % Make sure there's enough room in the visited array
-    if i > len
-        visited = [visited; zeros(len,2)];
-        len = len * 2;
-    end
     
     % Get the next point
     pt = queue.remove()';
     
     % Check to see if the point is valid and we haven't visited it before
-    if isInvalidPt(pt,labeled) ...
-            || sum(ismember(visited, pt, 'rows')) > 0 ...
+    if visited(pt(2), pt(1)) || isInvalidPt(pt,labeled) ...
             || changedPerspective(pt, bldNum, labeled)
         continue;
     end
     
     % Process the point
-    visited(i,:) = pt;
     [~, bMap] = buildingForPoint(bMap, 30, 'Dummy', pt);
     desc = getBuildingSpatialDesc(bMap('30'), bMap, labeled);
     if strcmp(descOrig, desc)
@@ -44,8 +34,7 @@ while ~queue.isEmpty()
     else
         rejected.add(pt);
     end
-    
-    i = i + 1;
+    visited(pt(2), pt(1)) = 1;
 end
 
 end
