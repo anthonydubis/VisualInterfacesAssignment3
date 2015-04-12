@@ -13,7 +13,7 @@ desc = getNearbyDescription(b, bMap, labeled);
 % will have two rows with the first column corresponding to the distance
 % (1=North, 2=East, 3=South, 4=West) and the second the building number. If
 % the row contains all zeros, then a good relationship couldn't be found.
-R = getMostRelevantRelationships(b, bMap)
+R = getMostRelevantRelationships(b, bMap);
 
 % Now apped these relevant relationships to the desc
 directionalDesc = getDirectionalDescriptionForRelations(bMap, R);

@@ -91,17 +91,28 @@ fprintf('Done pruning the graph\n');
 end
 
 %% Step 3 - Setting and describing sources & targets
-
 % Turn campus into RBG
 rgb = campus(:,:,[1 1 1]);
-rgb(50,50,:) = [255 0 0]; % Sets pixel 50, 50 to red
 
 % Get the source (S) 
 figure(); imshow(campus);
 sLoc = int16(ginput(1));
 S = buildingForPoint(bMap, 28, 'Source', sLoc);
+sDesc = getBuildingSpatialDesc(bMap('28'), bMap, labeled);
 
-% Get the sources description
-sDesc = getBuildingSpatialDesc(bMap('28'), bMap, labeled)
+% Get the cloud of pixels around S that form an equivalence class
+[list, rejected] = getEquivalenceClass(S, bMap, sDesc, labeled);
 
-% Color the source and it's cloud green
+% Color in the cloud
+while ~list.isEmpty()
+    pt = list.remove();
+    rgb(pt(2),pt(1),:) = [255 0 0]; % Sets pixel 50, 50 to red
+end
+
+% Color in rejected area
+while ~rejected.isEmpty()
+    pt = rejected.remove();
+    rgb(pt(2),pt(1),:) = [0 255 0]; % Sets pixel 50, 50 to red
+end
+
+imshow(rgb);
