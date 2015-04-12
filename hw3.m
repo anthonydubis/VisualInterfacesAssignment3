@@ -42,11 +42,6 @@ for i=1:N
     b.number = labeled(pt(2), pt(1));
     b.name = b_names(int2str(b.number));
     
-%     % Plot centroid
-%     cent = b_stats.Centroid;
-%     center = plot(cent(1), cent(2), 'o', 'MarkerEdgeColor', 'r');
-%     set(center, 'MarkerSize', 6, 'LineWidth', 3);
-
     % Set basic properties
     b.area = b_stats.Area;
     b.centroid = b_stats.Centroid;
@@ -54,6 +49,7 @@ for i=1:N
     b = b.setBoundingBox(b_stats.BoundingBox);
     b = b.setImage(b_stats.Image);
     b.shape = determineShape(b, labeled);
+    b.region = getRegion(b.centroid, labeled);
     bMap(int2str(b.number)) = b;
     
     areaMin = min(areaMin, b.area);

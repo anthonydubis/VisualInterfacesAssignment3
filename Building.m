@@ -23,6 +23,7 @@ classdef Building
         buildingSize;
         oriented;
         shape;
+        region;
         
         % Spacial relationships
         north;
@@ -35,7 +36,8 @@ classdef Building
     methods
         function desc = getDescription(obj)
             desc = strcat(obj.buildingSize, {', '}, obj.oriented, ...
-                {', and '}, obj.shape);
+                {', '}, obj.shape, {', and in the '}, obj.region, ...
+                {' part of campus.'});
         end
         
         function obj = setOrientation(obj, b_orientation)
