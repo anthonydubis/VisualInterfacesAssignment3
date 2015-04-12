@@ -7,31 +7,31 @@ buildingArea = b.area;
 boundingArea = getBoxArea(box);
 
 if b.numLargeCircles > 0
-    shape = 'ContainsLargeCurvedRoom';
+    shape = 'contains a large curved room';
 elseif b.numMediumCircles > 0
-    shape = 'ContainsMediumSizedCurvedRoom';
+    shape = 'contains a medium sized curved room';
 elseif dividesCampus(b, labeled)
-    shape = 'DividesCampus';
+    shape = 'divides campus';
 elseif buildingArea == boundingArea
     if isSquare(b.boundingBox)
-        shape = 'Square';
+        shape = 'square in shape';
     else
-        shape = 'Rectangle';
+        shape = 'rectangle in shape';
     end
 elseif isIShaped(b)
-    shape = 'I-Shaped';
+    shape = 'I-shaped';
 elseif hasHole(b)
-    shape = 'IrregularShapedWithHole';
+    shape = 'irregular in shape with a hole';
 elseif buildingArea / boundingArea >= .85
-    shape = 'Rectangle-ish';
+    shape = 'close to a rectangle in shape';
 elseif isLShaped(b)
-    shape = 'L-Shaped';
+    shape = 'L-shaped';
 elseif isCShaped(b)
-    shape = 'C-Shaped';
+    shape = 'C-shaped';
 elseif isCrossShaped(b)
-    shape = 'CrossShaped';
+    shape = 'cross shaped';
 else
-    shape = 'IrregularShaped';
+    shape = 'irregular in shape';
 end
 end
 

@@ -33,12 +33,17 @@ classdef Building
     end
     
     methods
+        function desc = getDescription(obj)
+            desc = strcat(obj.buildingSize, {', '}, obj.oriented, ...
+                {', and '}, obj.shape);
+        end
+        
         function obj = setOrientation(obj, b_orientation)
             obj.orientation = b_orientation;
             if b_orientation < 45 && b_orientation > -45
-                obj.oriented = 'WestToEast';
+                obj.oriented = 'oriented west-to-east';
             else
-                obj.oriented = 'NorthToSouth';
+                obj.oriented = 'oriented north-to-south';
             end 
         end
         

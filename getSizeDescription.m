@@ -6,15 +6,15 @@ function [ size ] = getSizeDescription(buildingArea, minArea, maxArea)
 
 range_sz = (maxArea - minArea) / 6;
 
-size = 'medium';
+size = 'Medium in size';
 if buildingArea == minArea 
-    size = 'smallest';
+    size = 'Smallest in size';
 elseif buildingArea < (minArea + range_sz * .5)
-    size = 'tiny';
+    size = 'Tiny in size';
 elseif buildingArea < (minArea + range_sz * 1.5)
-    size = 'small';
+    size = 'Small in size';
 elseif buildingArea > (minArea + range_sz * 3.5)
-    size = 'large';
+    size = 'Large in size';
 end
 
 end
