@@ -118,3 +118,5 @@ while ~cloud.isEmpty()
     rgb(pt(2),pt(1),:) = [0 0 255];
 end
 imshow(rgb);
+
+[bNums, bNames, Z] = outputStepOneData( bMap );
