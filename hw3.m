@@ -80,6 +80,8 @@ for i=1:N
     bMap = pruneRelationships(bMap, bMap(int2str(i)));
 end
 
+tab = outputStepTwoData(bMap);
+
 % %% Step 3 - Setting and describing sources & targets
 % % Turn campus into RBG
 % rgb = campus(:,:,[1 1 1]);
