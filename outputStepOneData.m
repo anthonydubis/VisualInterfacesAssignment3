@@ -1,4 +1,4 @@
-function [tab] = outputStepOneData( bMap )
+function tab = outputStepOneData( bMap )
 
 % Build Nums
 bNums = [1:27]';

@@ -1,5 +1,5 @@
-clc; clear; close all;
-resetData = true;
+% clc; clear; close all;
+resetData = false;
 
 %% Step 0 - Get the campus map, a BW represention, and a labeled version
 
@@ -118,5 +118,3 @@ while ~cloud.isEmpty()
     rgb(pt(2),pt(1),:) = [0 0 255];
 end
 imshow(rgb);
-
-[bNums, bNames, Z] = outputStepOneData( bMap );
