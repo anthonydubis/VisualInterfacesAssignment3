@@ -5,8 +5,8 @@ function [ size ] = getSizeDescription(buildingArea, minArea, maxArea)
 % Medium and large will capture greater range segments
 
 range_sz = (maxArea - minArea) / 6;
-
 size = 'Medium in size';
+
 if buildingArea == minArea 
     size = 'Smallest in size';
 elseif buildingArea < (minArea + range_sz * .5)
