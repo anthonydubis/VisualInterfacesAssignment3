@@ -99,6 +99,9 @@ while ~cloud.isEmpty()
 end
 imshow(rgb);
 
+% Get S ready for graph traversal
+bMap = pruneRelationships(bMap, bMap(int2str(28)));
+
 % Get the target (T) and it's description *********************************
 tLoc = int16(ginput(1));
 T = buildingForPoint(bMap, 29, 'Target', tLoc);
@@ -113,24 +116,33 @@ while ~cloud.isEmpty()
 end
 imshow(rgb);
 
-%% Step 4
+% Get S ready for graph traversal
+if labeled(T.centroid(2), T.centroid(1)) ~= 0
+    % T is in a building - let's make the building the target
+    newTarget = bMap(int2str(labeled(T.centroid(2), T.centroid(1))));
+    newTarget.number = 29;
+    bMap('29') = newTarget;
+end
 
-% Prune the source and target points
-bMap = pruneRelationships(bMap, bMap(int2str(28)));
 bMap = pruneRelationships(bMap, bMap(int2str(29)));
-
-% Set relationships to T
 for i=1:N
     B = bMap(int2str(i));
     [B, T] = setSpatialRelationships(B, T);
     bMap(int2str(i)) = B;
 end
-
 % Reprune to get rid of relationships to T that can be inferred
 for i=1:N
     bMap = pruneRelationships(bMap, bMap(int2str(i)));
 end
 
+%% Step 4
+
+% Get the path
 path = getPath(bMap, S, T);
+
+% Describe the path
 directions = describePath(bMap, path);
+
+S.centroid
+T.centroid
 

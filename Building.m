@@ -35,9 +35,12 @@ classdef Building
     
     methods
         function desc = getDescription(obj)
-            desc = strcat(obj.buildingSize, {', '}, obj.oriented, ...
-                {', '}, obj.shape, {', and in the '}, obj.region, ...
-                {' part of campus.'});
+            desc = strcat(obj.buildingSize, {', '});
+            if abs(obj.orientation) < 20 || abs(obj.orientation) > 70
+                desc = strcat(desc, obj.oriented, {', '});
+            end
+            desc = strcat(desc, obj.shape, {', and in the '}, ...
+                obj.region, {' part of campus.'});
         end
         
         function obj = setOrientation(obj, b_orientation)
