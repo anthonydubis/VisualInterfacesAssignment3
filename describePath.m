@@ -18,8 +18,7 @@ for i=1:(steps-1)
     % Describe the building
     move = strcat(move, {'(to the buiding that is '}, ...
         b.getDescription, {')'});
-    
-    move = strcat(move, '.');
+
     directions{i} = move;
 end
 
@@ -28,7 +27,7 @@ info = path(steps,:);
 terminal = strcat({'Go to the area that is '}, ...
     getDirectionFromIdentifer(info(2)));
 if info(3) == 1
-    terminal = strcat(terminal, {' and near '});
+    terminal = strcat(terminal, {' and near'});
 end
 terminal = strcat(terminal, '.');
 directions{steps} = terminal;
