@@ -80,37 +80,57 @@ for i=1:N
     bMap = pruneRelationships(bMap, bMap(int2str(i)));
 end
 
-tab = outputStepTwoData(bMap);
+%% Step 3 - Setting and describing sources & targets
+% Turn campus into RBG
+rgb = campus(:,:,[1 1 1]);
 
-% %% Step 3 - Setting and describing sources & targets
-% % Turn campus into RBG
-% rgb = campus(:,:,[1 1 1]);
-% 
-% % Get the source (S) and it's description *********************************
-% figure(); imshow(rgb);
-% sLoc = int16(ginput(1));
-% S = buildingForPoint(bMap, 28, 'Source', sLoc);
-% sDesc = getBuildingSpatialDesc(bMap('28'), bMap, labeled);
-% fprintf('Source Description is: %s\n', sDesc{1});
-% 
-% % Get the equivalence class of pixels surrounding S and color them green
-% cloud = getEquivalenceClass(S, bMap, sDesc, labeled);
-% while ~cloud.isEmpty()
-%     pt = cloud.remove();
-%     rgb(pt(2),pt(1),:) = [0 255 0];
-% end
-% imshow(rgb);
-% 
-% % Get the target (T) and it's description *********************************
-% tLoc = int16(ginput(1));
-% T = buildingForPoint(bMap, 29, 'Target', tLoc);
-% tDesc = getBuildingSpatialDesc(bMap('29'), bMap, labeled);
-% fprintf('Target Description is: %s\n', tDesc{1});
-% 
-% % Get the equivalence class of pixels surrounding S and color them green
-% cloud = getEquivalenceClass(T, bMap, tDesc, labeled);
-% while ~cloud.isEmpty()
-%     pt = cloud.remove();
-%     rgb(pt(2),pt(1),:) = [0 0 255];
-% end
-% imshow(rgb);
+% Get the source (S) and it's description *********************************
+figure(); imshow(rgb);
+sLoc = int16(ginput(1));
+S = buildingForPoint(bMap, 28, 'Source', sLoc);
+sDesc = getBuildingSpatialDesc(bMap('28'), bMap, labeled);
+fprintf('Source Description is: %s\n', sDesc{1});
+
+% Get the equivalence class of pixels surrounding S and color them green
+cloud = getEquivalenceClass(S, bMap, sDesc, labeled);
+while ~cloud.isEmpty()
+    pt = cloud.remove();
+    rgb(pt(2),pt(1),:) = [0 255 0];
+end
+imshow(rgb);
+
+% Get the target (T) and it's description *********************************
+tLoc = int16(ginput(1));
+T = buildingForPoint(bMap, 29, 'Target', tLoc);
+tDesc = getBuildingSpatialDesc(bMap('29'), bMap, labeled);
+fprintf('Target Description is: %s\n', tDesc{1});
+
+% Get the equivalence class of pixels surrounding S and color them green
+cloud = getEquivalenceClass(T, bMap, tDesc, labeled);
+while ~cloud.isEmpty()
+    pt = cloud.remove();
+    rgb(pt(2),pt(1),:) = [0 0 255];
+end
+imshow(rgb);
+
+%% Step 4
+
+% Prune the source and target points
+bMap = pruneRelationships(bMap, bMap(int2str(28)));
+bMap = pruneRelationships(bMap, bMap(int2str(29)));
+
+% Set relationships to T
+for i=1:N
+    B = bMap(int2str(i));
+    [B, T] = setSpatialRelationships(B, T);
+    bMap(int2str(i)) = B;
+end
+
+% Reprune to get rid of relationships to T that can be inferred
+for i=1:N
+    bMap = pruneRelationships(bMap, bMap(int2str(i)));
+end
+
+path = getPath(bMap, S, T);
+directions = describePath(bMap, path);
+

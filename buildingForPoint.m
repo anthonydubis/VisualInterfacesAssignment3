@@ -1,7 +1,7 @@
 function [bld, bMap] = buildingForPoint(bMap, num, name, loc)
 % Create and setup a new building object for a point
 
-side = 5;
+side = 1;
 
 N = 27; % Number of buildings on campus.
 bld = Building;
