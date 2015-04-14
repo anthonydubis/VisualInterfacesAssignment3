@@ -142,7 +142,3 @@ path = getPath(bMap, S, T);
 
 % Describe the path
 directions = describePath(bMap, path);
-
-S.centroid
-T.centroid
-
